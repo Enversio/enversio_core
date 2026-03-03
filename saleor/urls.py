@@ -17,7 +17,7 @@ from .thumbnail.views import handle_thumbnail
 
 urlpatterns = [
     re_path(
-        r"^graphql/$",
+        r"^graphql/?$",
         csrf_exempt(GraphQLView.as_view(backend=backend, schema=schema)),
         name="api",
     ),
