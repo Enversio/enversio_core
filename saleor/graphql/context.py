@@ -45,7 +45,9 @@ def set_decoded_auth_token(request: SaleorContext):
 
 
 def set_app_on_context(request: SaleorContext):
-    if request.path == API_PATH and not hasattr(request, "app"):
+    if request.path.rstrip("/") == str(API_PATH).rstrip("/") and not hasattr(
+        request, "app"
+    ):
         request.app = get_app_promise(request).get()
 
 
