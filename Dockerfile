@@ -11,8 +11,11 @@ RUN apt-get -y update \
 WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:0.8 /uv /uvx /bin/
 ENV UV_COMPILE_BYTECODE=1 UV_SYSTEM_PYTHON=1 UV_PROJECT_ENVIRONMENT=/usr/local
-RUN --mount=type=cache,id=uv-cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
+# No uv cache mount: Railway requires cache mount ids to be prefixed with the
+# id of the service consuming them (`id=s/<service id>-<target>`), and this one
+# Dockerfile is shared by saleor-web, saleor-worker and saleor-beat, which have
+# three different service ids. The builder's own layer caching covers this.
+RUN --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project --no-editable
 
