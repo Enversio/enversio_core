@@ -11,13 +11,14 @@ RUN apt-get -y update \
 WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:0.8 /uv /uvx /bin/
 ENV UV_COMPILE_BYTECODE=1 UV_SYSTEM_PYTHON=1 UV_PROJECT_ENVIRONMENT=/usr/local
-# No uv cache mount: Railway requires cache mount ids to be prefixed with the
-# id of the service consuming them (`id=s/<service id>-<target>`), and this one
-# Dockerfile is shared by saleor-web, saleor-worker and saleor-beat, which have
-# three different service ids. The builder's own layer caching covers this.
-RUN --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --no-editable
+# Neither mount the upstream Dockerfile used survives Railway's builder: cache
+# mount ids must carry the id of the consuming service (`id=s/<service id>-…`),
+# which cannot be written once for the three services that share this file, and
+# bind mounts are rejected outright ("other mount types are not supported").
+# Copying the two manifests is equivalent here — this is a builder stage that
+# is discarded, so nothing extra reaches the final image.
+COPY uv.lock pyproject.toml ./
+RUN uv sync --locked --no-install-project --no-editable
 
 ### Final image
 FROM python:3.12-slim
