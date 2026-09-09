@@ -17,7 +17,12 @@ alone, so rotating it in the admin is not undone by the next deploy.
 import os
 import sys
 
-import django
+# Running `python scripts/bootstrap_admin.py` puts *this* directory on
+# sys.path, not the repository root — unlike `python manage.py`, which is why
+# migrate works and this did not ("No module named 'saleor'").
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import django  # noqa: E402  (must follow the sys.path fix)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "saleor.settings")
 django.setup()
