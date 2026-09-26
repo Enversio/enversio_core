@@ -21,7 +21,6 @@ pyjwt = "2026-09-11T13:11:54.638995Z"
 constraints = [
     { name = "anyio", specifier = ">=4.14.2" },
     { name = "pyasn1", specifier = ">=0.6.4" },
-    { name = "setuptools", specifier = ">=80.10.2,<81" },
 ]
 overrides = [{ name = "lxml", specifier = ">=6.1.1,<7" }]
 
@@ -2617,6 +2616,7 @@ dependencies = [
     { name = "semantic-version" },
     { name = "sendgrid" },
     { name = "sentry-sdk" },
+    { name = "setuptools" },
     { name = "stripe" },
     { name = "text-unidecode" },
     { name = "urllib3" },
@@ -2729,6 +2729,7 @@ requires-dist = [
     { name = "semantic-version", specifier = ">=2.10.0,<3" },
     { name = "sendgrid", specifier = ">=6.7.1,<7" },
     { name = "sentry-sdk", specifier = "~=2.12" },
+    { name = "setuptools", specifier = ">=80.10.2,<81" },
     { name = "stripe", specifier = ">=3.0.0,<4" },
     { name = "text-unidecode", specifier = "~=1.2" },
     { name = "urllib3", specifier = ">=2.7.0,<3" },

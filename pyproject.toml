@@ -56,6 +56,7 @@ dependencies = [
   "python-json-logger>=0.1.11,<3.3.0",
   "pytimeparse>=1.1.8,<2",
   "razorpay~=1.2",
+  "setuptools>=80.10.2,<81", # Razorpay imports pkg_resources at runtime.
   "redis>=5.0.1,<6",
   "requests>=2.34,<3",
   "requests-hardened>=1.2.1,<2.0.0",
@@ -186,8 +187,8 @@ help = "Run tests with db reuse to speed up testing time"
 environments = [ "platform_python_implementation != 'PyPy'" ]
 package = false
 exclude-newer = "3 weeks"
-# Security floors; preserve pkg_resources for the Razorpay runtime dependency.
-constraint-dependencies = [ "anyio>=4.14.2", "pyasn1>=0.6.4", "setuptools>=80.10.2,<81" ]
+# Security floors for transitive runtime dependencies.
+constraint-dependencies = [ "anyio>=4.14.2", "pyasn1>=0.6.4" ]
 # Authorize.Net 1.1.6 pins lxml==4.*. Keep the SDK but use the patched
 # etree/objectify implementation; remove this override when upstream relaxes it.
 override-dependencies = [ "lxml>=6.1.1,<7" ]
