@@ -30,7 +30,6 @@ from ...account.models import Address, Group, User
 from ...account.search import (
     update_user_search_vector,
 )
-from ...account.tests.fixtures.user import dangerously_create_test_user
 from ...account.utils import get_default_customer_type, store_user_address
 from ...app.models import App
 from ...attribute.models import (
@@ -1599,11 +1598,10 @@ def _create_staff_user(staff_password, email=None, superuser=False, customer_typ
     if staff_user:
         return staff_user
 
-    staff_user = dangerously_create_test_user(
+    staff_user = User(
         first_name=first_name,
         last_name=last_name,
-        email=email,
-        password=staff_password,
+        email=User.objects.normalize_email(email),
         default_billing_address=address,
         default_shipping_address=address,
         is_staff=True,
@@ -1611,6 +1609,10 @@ def _create_staff_user(staff_password, email=None, superuser=False, customer_typ
         is_superuser=superuser,
         customer_type=customer_type or get_default_customer_type(),
     )
+    if staff_password:
+        password_validation.validate_password(staff_password, staff_user)
+        staff_user.set_password(staff_password)
+    staff_user.save()
     staff_user.addresses.add(address)
     update_user_search_vector(staff_user)
     return staff_user
