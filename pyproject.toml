@@ -215,7 +215,8 @@ extend_exclude = [ "conftest\\.py", ".*/conftest\\.py", ".*/tests/.*" ]
   "azure-storage-common",
   "django-redis",
   "psycopg",
-  "pyxb"
+  "pyxb",
+  "setuptools" # Provides pkg_resources imported internally by the Razorpay SDK.
 ]
 
 [tool.django-stubs]
