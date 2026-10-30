@@ -1,12 +1,14 @@
 import copy
+import datetime
 import logging
 from typing import TYPE_CHECKING
 
+from django.conf import settings
+from django.db import connection
 from faker import Faker
 
 from ...account.models import Address, User
 from ...checkout.utils import get_or_create_checkout_metadata
-from .random_data import create_address, create_fake_user
 
 if TYPE_CHECKING:
     from ...checkout.models import Checkout
@@ -26,7 +28,19 @@ def generate_fake_address() -> "Address":
 
     The instance cannot be saved
     """
-    fake_address = create_address(save=False)
+    fake_address = Address(
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
+        street_address_1=fake.street_address(),
+        city=fake.city(),
+        country=settings.DEFAULT_COUNTRY,
+    )
+    if fake_address.country == "US":
+        state = fake.state_abbr(include_territories=False)
+        fake_address.country_area = state
+        fake_address.postal_code = fake.postalcode_in_state(state)
+    else:
+        fake_address.postal_code = fake.postalcode()
     # Prevent accidental saving of the instance
     fake_address.save = _fake_save
     return fake_address
@@ -37,7 +51,24 @@ def generate_fake_user() -> "User":
 
     The instance cannot be saved
     """
-    fake_user = create_fake_user(user_password=None, save=False, generate_id=True)
+    address = generate_fake_address()
+    _, max_user_pk = connection.ops.integer_field_range(
+        User._meta.pk.get_internal_type()
+    )
+    fake_user = User(
+        pk=fake.random_int(min=1, max=max_user_pk),
+        first_name=address.first_name,
+        last_name=address.last_name,
+        email=fake.safe_email(),
+        default_billing_address=address,
+        default_shipping_address=address,
+        is_active=True,
+        note=fake.paragraph(),
+        date_joined=fake.date_time(tzinfo=datetime.UTC),
+    )
+    # Synthetic identities must never resolve addresses belonging to a real user
+    # whose primary key happens to match the generated one.
+    fake_user._prefetched_objects_cache = {"addresses": Address.objects.none()}
     # Prevent accidental saving of the instance
     fake_user.save = _fake_save
     return fake_user
