@@ -42,7 +42,7 @@ dependencies = [
     "markdown>=3.10.2,<4",
     "measurement>=3.2.2,<4",
     "micawber>=0.6.2,<0.7",
-    "oauthlib>=4.0.0,<5",
+    "oauthlib>=4.0.1,<5",
     "petl==1.7.20",
     "phonenumberslite>=9.0.32,<10",
     "pillow>=13.0.0,<14",
@@ -130,6 +130,7 @@ dev = [
 envfile = ".env"
 
 [tool.uv]
+constraint-dependencies = ["joserfc>=1.7.5", "pyasn1>=0.6.5"]
 environments = [
   "platform_python_implementation != 'PyPy'"
 ]
@@ -156,6 +157,8 @@ django = "2026-08-04T15:05:00Z" # https://www.djangoproject.com/weblog/2026/aug/
 authlib = "2026-10-14T14:18:52.307110Z" # https://pypi.org/project/authlib/1.9.1/
 certifi = "2026-10-18T16:22:07.655710Z" # https://pypi.org/project/certifi/2026.10.18/
 pillow = "2026-10-16T22:19:09.718711Z" # https://pypi.org/project/pillow/13.0.0/
+pyasn1 = "2026-10-27T06:33:49.125917Z" # https://pypi.org/project/pyasn1/0.6.5/
+oauthlib = "2026-10-31T09:53:58.008755Z" # https://pypi.org/project/oauthlib/4.0.1/
 
 [tool.pytest]
 addopts = [
